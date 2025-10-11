@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 export default function AudioPlayer({ isPlaying }) {
   const audioRef = useRef(null);
@@ -9,7 +9,7 @@ export default function AudioPlayer({ isPlaying }) {
 
     if (isPlaying) {
       // Bắt đầu chơi nhạc và xử lý lỗi nếu trình duyệt chặn tự động phát
-      audio.play().catch(error => {
+      audio.play().catch((error) => {
         console.warn("Audio autoplay was prevented by browser policy:", error);
       });
     } else {
@@ -18,10 +18,6 @@ export default function AudioPlayer({ isPlaying }) {
   }, [isPlaying]); // Effect này sẽ chạy lại mỗi khi `isPlaying` thay đổi
 
   return (
-    <audio 
-      ref={audioRef} 
-      src="/chamhoa.mp3" // Một bản nhạc nền nhẹ nhàng, lặp lại
-      loop 
-    />
+    <audio ref={audioRef} src={`${import.meta.env.BASE_URL}chamhoa.mp3`} loop />
   );
 }

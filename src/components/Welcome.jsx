@@ -1,14 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 
 export default function Welcome({ onStart }) {
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [hasAgreed, setHasAgreed] = useState(false); // ✅ Đã đọc và đồng ý
 
   function handleClick() {
-    // Gọi hàm onStart được truyền từ App.jsx để bắt đầu chơi nhạc
+    if (!hasAgreed) {
+      alert("🌸 Vui lòng đọc và đồng ý bản xin bản quyền hình ảnh trước khi mở quà nhé!");
+      return;
+    }
     onStart();
-    // Chuyển hướng đến trang ý tưởng đầu tiên
-    navigate('/1');
+    navigate("/1");
   }
 
   return (
@@ -24,15 +29,96 @@ export default function Welcome({ onStart }) {
         <p className="mt-4 text-lg text-pink-500">
           Dành riêng cho bạn nhân ngày đặc biệt.
         </p>
+
+        {/* Nút mở bản quyền */}
+        <motion.button
+          onClick={() => setShowModal(true)}
+          className="mt-8 px-6 py-2 rounded-full text-pink-700 font-medium border border-pink-300 
+                     bg-gradient-to-r from-pink-50/70 to-white/60 backdrop-blur-sm 
+                     shadow-md hover:shadow-lg hover:from-pink-100/80 hover:to-white/80
+                     transition-all duration-300 flex items-center gap-2"
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <span>📜</span>
+          <span>Đọc bản xin bản quyền hình ảnh</span>
+        </motion.button>
+
+        {/* 📌 Ghi chú */}
+        <p className="mt-3 text-sm text-pink-600 italic">
+          📌 Vui lòng đọc và đồng ý bản quyền trước khi mở quà nhé!
+        </p>
+
+        {/* Nút mở quà */}
         <motion.button
           onClick={handleClick}
-          className="mt-10 bg-white text-pink-500 font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+          className={`mt-8 px-8 py-4 rounded-full font-semibold shadow-lg transform transition-all duration-300
+            ${
+              hasAgreed
+                ? "bg-white text-pink-500 hover:shadow-xl hover:scale-105"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+            }`}
+          whileHover={hasAgreed ? { scale: 1.1 } : {}}
+          whileTap={hasAgreed ? { scale: 0.95 } : {}}
+          disabled={!hasAgreed}
         >
           🎁 Nhấn để mở quà 🎁
         </motion.button>
       </motion.div>
+
+      {/* Modal xin bản quyền */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white rounded-2xl shadow-lg p-6 max-w-md w-full text-left text-pink-700 relative"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h2 className="text-xl font-bold mb-3 text-center text-pink-600">
+                📜 Thư xin bản quyền hình ảnh
+              </h2>
+              <p className="text-sm leading-relaxed text-gray-700">
+                Kính gửi Nguyễn Thị Kim Ngân,  
+                <br />
+                Trang web này chỉ sử dụng hình ảnh với mục đích <b>phi thương mại</b>,
+                nhằm lan tỏa thông điệp tích cực và tri ân ngày đặc biệt.  
+                <br />
+              </p>
+
+              {/* Checkbox xác nhận đã đọc */}
+              <div className="flex items-center gap-2 mt-5">
+                <input
+                  type="checkbox"
+                  id="agree"
+                  checked={hasAgreed}
+                  onChange={(e) => setHasAgreed(e.target.checked)}
+                  className="w-4 h-4 accent-pink-500"
+                />
+                <label htmlFor="agree" className="text-sm text-gray-700">
+                  Tôi đã đọc và đồng ý với nội dung bản xin bản quyền hình ảnh.
+                </label>
+              </div>
+
+              <div className="text-center mt-6">
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="px-6 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-600 transition"
+                >
+                  Đóng
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

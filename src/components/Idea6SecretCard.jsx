@@ -142,7 +142,7 @@ export default function Idea7LovePredictor() {
                   </button>
                   {/* 3. Thêm nút chuyển trang */}
                   <button
-                    onClick={() => navigate('/8')}
+                    onClick={() => navigate('/7')}
                     className="bg-pink-500 text-white px-4 py-1 text-sm rounded-full hover:bg-pink-600 transition shadow"
                   >
                     Tiếp theo →

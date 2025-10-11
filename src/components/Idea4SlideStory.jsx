@@ -21,7 +21,7 @@ const slides = [
   {
     title: "Lời chúc riêng",
     content: "Mong em luôn bình yên, rực rỡ và gặp thật nhiều điều khiến tim mỉm cười! 😊🌸",
-    img: "congchua.jpg"
+    img: `${import.meta.env.BASE_URL}congchua.jpg`
   },
   {
     title: "Chúc mừng Ngày Phụ nữ Việt Nam!",

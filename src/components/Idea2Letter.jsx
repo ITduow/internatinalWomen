@@ -97,7 +97,7 @@ export default function Idea2Letter() {
                 transition={{ duration: 0.6, ease: "easeInOut" }}
                 style={{ backfaceVisibility: "hidden" }} // Ẩn mặt trước khi lật
               >
-                <img src="nang.jpg" alt="Bouquet" className="w-45 h-35" />
+                <img src={`${import.meta.env.BASE_URL}nang.jpg`} alt="Bouquet" className="w-45 h-35" />
                 <p className="text-sm mt-2 text-gray-600">Em là bông hoa đẹp nhất!</p>
                 <button
                   className="mt-3 text-xs font-bold text-pink-500 hover:text-pink-700 transition-colors"

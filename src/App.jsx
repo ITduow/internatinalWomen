@@ -6,6 +6,7 @@ import MainLayout from "./components/MainLayout";
 import Welcome from "./components/Welcome";
 import AudioPlayer from "./components/AudioPlayer";
 import SpecialPage from "./components/SpecialPage"; // Trang đặc biệt
+import FireworkDisplay from "./components/FireworkDisplay";
 // Các trang ý tưởng
 import Idea1Surprise from "./components/Idea1Surprise";
 import Idea2Letter from "./components/Idea2Letter";
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/7" element={<Idea7Minimal />} />
           <Route path="/8" element={<Idea8BloomOnClick />} />
           <Route path="/special" element={<SpecialPage />} />
+          <Route path="/fireworks" element={<FireworkDisplay />} />
         </Route>
         
         {/* Nếu người dùng vào một đường dẫn không tồn tại, chuyển về trang chào mừng */}

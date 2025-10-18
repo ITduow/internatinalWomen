@@ -1,174 +1,110 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
 
-export default function FireworkDisplay() {
-  const navigate = useNavigate();
-  const canvasRef = useRef(null);
+export default function SpecialPage() {
+    const navigate = useNavigate();
+    const [fillPercent, setFillPercent] = useState(0);
+    const [isFilled, setIsFilled] = useState(false); // Trạng thái khi tim đã đầy
+    const [showButton, setShowButton] = useState(false); // Trạng thái để hiện nút cuối
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let fireworks = [];
-    let particles = [];
-    let animationId;
+    const handleFillHeart = () => {
+        if (fillPercent >= 100) return;
 
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    window.addEventListener('resize', resize);
-    resize();
+        // Lấp đầy nhanh hơn, chỉ cần 4 lần nhấn
+        const newPercent = fillPercent + 25;
+        setFillPercent(newPercent);
 
-    const colors = ["255,99,132", "255,182,193", "255,215,0", "255,105,180", "135,206,250", "152,251,152", "221,160,221"];
+        if (newPercent >= 100) {
+            // Khi tim đầy, kích hoạt hiệu ứng nổ tung
+            setTimeout(() => {
+                setIsFilled(true);
+            }, 500); // Đợi 0.5s sau lần nhấn cuối
 
-    class Firework {
-      constructor(x, y, targetX, targetY, color) {
-        this.x = x;
-        this.y = y;
-        this.startX = x;
-        this.startY = y;
-        this.targetX = targetX;
-        this.targetY = targetY;
-        this.color = color;
-        this.distance = Math.sqrt(Math.pow(targetX - x, 2) + Math.pow(targetY - y, 2));
-        this.speed = 2 + Math.random() * 3; // Tốc độ ban đầu
-        this.angle = Math.atan2(targetY - y, targetX - x);
-        this.dx = Math.cos(this.angle) * this.speed;
-        this.dy = Math.sin(this.angle) * this.speed;
-        this.currentDistance = 0;
-        this.brightness = Math.random() * 0.5 + 0.5;
-        this.alpha = 1;
-      }
-
-      update() {
-        this.currentDistance = Math.sqrt(Math.pow(this.x - this.startX, 2) + Math.pow(this.y - this.startY, 2));
-
-        if (this.currentDistance < this.distance) {
-          this.x += this.dx;
-          this.y += this.dy;
-        } else {
-          // Explode
-          for (let i = 0; i < 80; i++) {
-            particles.push(new Particle(this.targetX, this.targetY, this.color));
-          }
-          return true; // Indicates it should be removed
+            // Hiển thị nút bấm sau khi hiệu ứng kết thúc
+            setTimeout(() => {
+                setShowButton(true);
+            }, 2000); // Đợi 2s để hiệu ứng diễn ra
         }
-        return false;
-      }
-
-      draw() {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${this.color}, ${this.alpha * this.brightness})`;
-        ctx.fill();
-        ctx.restore();
-      }
-    }
-
-    class Particle {
-      constructor(x, y, color) {
-        this.x = x;
-        this.y = y;
-        this.color = color;
-        this.dx = Math.random() * 8 - 4;
-        this.dy = Math.random() * 8 - 4;
-        this.alpha = 1;
-        this.decay = Math.random() * 0.03 + 0.01;
-        this.gravity = 0.05;
-      }
-
-      update() {
-        this.dx *= 0.98; // Air resistance
-        this.dy += this.gravity;
-        this.x += this.dx;
-        this.y += this.dy;
-        this.alpha -= this.decay;
-      }
-
-      draw() {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
-        ctx.fill();
-        ctx.restore();
-      }
-    }
-
-    const loop = () => {
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.globalCompositeOperation = 'lighter';
-
-      for (let i = fireworks.length - 1; i >= 0; i--) {
-        const done = fireworks[i].update();
-        fireworks[i].draw();
-        if (done) {
-          fireworks.splice(i, 1);
-        }
-      }
-
-      for (let i = particles.length - 1; i >= 0; i--) {
-        particles[i].update();
-        particles[i].draw();
-        if (particles[i].alpha <= 0) {
-          particles.splice(i, 1);
-        }
-      }
-
-      if (Math.random() < 0.1) { // Tần suất bắn pháo hoa
-        const startX = canvas.width / 2;
-        const startY = canvas.height;
-        const targetX = Math.random() * canvas.width * 0.8 + canvas.width * 0.1;
-        const targetY = Math.random() * (canvas.height * 0.5) + canvas.height * 0.1;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        fireworks.push(new Firework(startX, startY, targetX, targetY, color));
-      }
-
-      animationId = requestAnimationFrame(loop);
     };
-    loop();
 
-    return () => {
-      cancelAnimationFrame(animationId);
-      window.removeEventListener('resize', resize);
-    };
-  }, []);
+    return (
+        <div className="relative flex flex-col items-center justify-center min-h-[60vh] text-center p-4 bg-gradient-to-br from-pink-50 to-rose-100 overflow-hidden">
+            
+            <AnimatePresence>
+                {!isFilled && (
+                    <motion.div
+                        key="heart-filler"
+                        exit={{ opacity: 0, scale: 0.5 }}
+                        transition={{ duration: 0.5 }}
+                        className="flex flex-col items-center"
+                    >
+                        <motion.h1 
+                            className="text-2xl font-bold text-pink-600 mb-4"
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                        >
+                            Một món quà cuối cùng...
+                        </motion.h1>
+                        <motion.p 
+                            className="text-gray-600 mb-6"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1, transition: { delay: 0.3 } }}
+                        >
+                            Hãy chạm để lấp đầy trái tim yêu thương nhé!
+                        </motion.p>
+                        
+                        <div className="relative w-32 h-32 cursor-pointer mb-6" onClick={handleFillHeart}>
+                            <span className="absolute inset-0 text-gray-300 text-8xl flex items-center justify-center">♡</span>
+                            <div className="absolute bottom-0 left-0 w-full overflow-hidden transition-all duration-300 ease-linear" style={{ height: `${fillPercent}%` }}>
+                                <motion.span 
+                                    className="text-red-500 text-8xl flex items-center justify-center"
+                                    animate={{ scale: [1, 1.05, 1] }}
+                                    transition={{ repeat: Infinity, duration: 1.5 }}
+                                >
+                                    ❤️
+                                </motion.span>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
+            {/* Hiệu ứng trái tim nổ tung */}
+            <AnimatePresence>
+                {isFilled && !showButton && (
+                    <motion.div
+                        key="heart-filled"
+                        initial={{ scale: 1 }}
+                        animate={{ scale: [1, 20, 15], opacity: [1, 1, 0] }}
+                        transition={{ duration: 1.5, ease: 'easeInOut' }}
+                        className="absolute text-red-500 text-8xl z-20"
+                    >
+                        ❤️
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-  return (
-    <div className="relative flex flex-col items-center justify-center min-h-[100vh] overflow-hidden bg-gradient-to-br from-gray-900 to-indigo-900 text-center p-4">
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 pointer-events-none z-0"
-      />
-
-      <div className="relative z-20">
-        <motion.h1
-          className="text-5xl md:text-7xl font-extrabold text-white mb-8 drop-shadow-lg"
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, type: "spring", stiffness: 100 }}
-        >
-          Chúc mừng ngày đặc biệt!
-        </motion.h1>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.5, duration: 0.8, type: "spring", stiffness: 100 }}
-        >
-          <button
-            onClick={() => navigate("/1")}
-            className="bg-purple-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-purple-700 transition duration-300 ease-in-out shadow-xl transform hover:scale-105"
-          >
-            Quay về trang đầu
-          </button>
-        </motion.div>
-      </div>
-    </div>
-  );
+            {/* Nút bấm cuối cùng xuất hiện */}
+            <AnimatePresence>
+                {showButton && (
+                    <motion.div
+                        key="final-button"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.8, type: 'spring' }}
+                        className="z-10 flex flex-col items-center"
+                    >
+                        <h2 className="text-2xl font-bold text-pink-600">Và đây là điều bất ngờ...</h2>
+                        <button
+                            onClick={() => navigate('/fireworks')}
+                            className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition shadow-lg flex items-center gap-2 transform hover:scale-105"
+                        >
+                            Dành cho bạn ✨
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
 }

@@ -103,7 +103,7 @@ export default function Idea1Surprise() {
             <div>
               <label className="font-medium">Ai là bông hoa đẹp nhất nào?</label><br />
               <label><input type="radio" name="like" value="yes" defaultChecked /> Là em </label>
-              <label className="ml-4"><input type="radio" name="like" value="no" /> Không phải em</label>
+              <label className="ml-4"><input type="radio" name="like" value="no" />  em</label>
             </div>
             <div>
               <label className="block font-medium">Nhập Họ và tên của em:</label>

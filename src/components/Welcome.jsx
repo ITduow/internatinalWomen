@@ -17,7 +17,7 @@ export default function Welcome({ onStart }) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-pink-100 text-center p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-pink-100 via-pink-50 to-white text-center p-4 relative overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: -50, scale: 0.8 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -45,11 +45,7 @@ export default function Welcome({ onStart }) {
         {/* Nút mở bản quyền */}
         <motion.div
           className="relative inline-block mt-4"
-          animate={
-            !hasAgreed
-              ? { scale: [1, 1.05, 1], y: [0, -3, 0] }
-              : {}
-          }
+          animate={!hasAgreed ? { scale: [1, 1.05, 1], y: [0, -3, 0] } : {}}
           transition={{
             duration: 1.8,
             repeat: hasAgreed ? 0 : Infinity,
@@ -86,26 +82,62 @@ export default function Welcome({ onStart }) {
           📌 Vui lòng đọc và đồng ý bản quyền trước khi mở quà nhé!
         </p>
 
-        {/* Nút mở quà */}
-        <motion.button
-          onClick={handleClick}
-          className={`mt-8 px-8 py-4 rounded-full font-semibold shadow-lg transform transition-all duration-300
-            ${
+        {/* 🌟 Nút mở quà nổi bật */}
+        <motion.div
+          className="relative mt-8"
+          animate={
+            hasAgreed
+              ? { scale: [1, 1.05, 1], rotate: [0, 1, -1, 0] }
+              : {}
+          }
+          transition={{
+            duration: 2,
+            repeat: hasAgreed ? Infinity : 0,
+            ease: "easeInOut",
+          }}
+        >
+          {/* Hiệu ứng ánh sáng xung quanh */}
+          {hasAgreed && (
+            <motion.div
+              className="absolute inset-0 rounded-full blur-lg bg-gradient-to-r from-pink-400 via-pink-200 to-pink-400 opacity-70"
+              animate={{ opacity: [0.3, 0.8, 0.3], scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+          )}
+
+          {/* Nút chính */}
+          <motion.button
+            onClick={handleClick}
+            disabled={!hasAgreed}
+            whileHover={hasAgreed ? { scale: 1.1 } : {}}
+            whileTap={hasAgreed ? { scale: 0.95 } : {}}
+            className={`relative z-10 px-10 py-5 rounded-full font-bold text-lg tracking-wide transition-all duration-500 shadow-lg ${
               hasAgreed
-                ? "bg-white text-pink-500 hover:shadow-xl hover:scale-105"
+                ? "text-white bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500 hover:shadow-2xl hover:brightness-110"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
-          whileHover={hasAgreed ? { scale: 1.1 } : {}}
-          whileTap={hasAgreed ? { scale: 0.95 } : {}}
-          disabled={!hasAgreed}
-          title={
-            !hasAgreed
-              ? "📜 Bạn cần đọc bản quyền trước khi mở quà nha!"
-              : ""
-          }
-        >
-          🎁 Nhấn để mở quà 🎁
-        </motion.button>
+            title={
+              !hasAgreed
+                ? "📜 Bạn cần đọc bản quyền trước khi mở quà nha!"
+                : ""
+            }
+          >
+            🎁 Nhấn để mở quà 🎁
+            {hasAgreed && (
+              <motion.span
+                className="absolute inset-0 rounded-full bg-gradient-to-r from-white/30 to-transparent"
+                animate={{
+                  x: ["-150%", "150%"],
+                }}
+                transition={{
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+            )}
+          </motion.button>
+        </motion.div>
       </motion.div>
 
       {/* Modal xin bản quyền */}

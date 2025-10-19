@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function Welcome({ onStart }) {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const [hasAgreed, setHasAgreed] = useState(false); // ✅ Đã đọc và đồng ý
+  const [hasAgreed, setHasAgreed] = useState(false);
 
   function handleClick() {
     if (!hasAgreed) {
@@ -30,19 +30,56 @@ export default function Welcome({ onStart }) {
           Dành riêng cho bạn nhân ngày đặc biệt.
         </p>
 
+        {/* 💡 Hướng dẫn động */}
+        {!hasAgreed && (
+          <motion.p
+            className="mt-6 text-base text-pink-600 font-medium flex items-center justify-center gap-2"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            👉 Hãy đọc bản quyền trước khi mở quà nhé!
+          </motion.p>
+        )}
+
         {/* Nút mở bản quyền */}
-        <motion.button
-          onClick={() => setShowModal(true)}
-          className="mt-8 px-6 py-2 rounded-full text-pink-700 font-medium border border-pink-300 
+        <motion.div
+          className="relative inline-block mt-4"
+          animate={
+            !hasAgreed
+              ? { scale: [1, 1.05, 1], y: [0, -3, 0] }
+              : {}
+          }
+          transition={{
+            duration: 1.8,
+            repeat: hasAgreed ? 0 : Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          <motion.button
+            onClick={() => setShowModal(true)}
+            className="px-6 py-2 rounded-full text-pink-700 font-medium border border-pink-300 
                      bg-gradient-to-r from-pink-50/70 to-white/60 backdrop-blur-sm 
                      shadow-md hover:shadow-lg hover:from-pink-100/80 hover:to-white/80
                      transition-all duration-300 flex items-center gap-2"
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <span>📜</span>
-          <span>Đọc bản xin bản quyền hình ảnh</span>
-        </motion.button>
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <span>📜</span>
+            <span>Đọc bản xin bản quyền hình ảnh</span>
+          </motion.button>
+
+          {/* Hiệu ứng mũi tên chỉ xuống nút bản quyền */}
+          {!hasAgreed && (
+            <motion.div
+              className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-pink-500 text-2xl"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 1.2, repeat: Infinity }}
+            >
+              ⬇️
+            </motion.div>
+          )}
+        </motion.div>
 
         {/* 📌 Ghi chú */}
         <p className="mt-3 text-sm text-pink-600 italic">
@@ -61,6 +98,11 @@ export default function Welcome({ onStart }) {
           whileHover={hasAgreed ? { scale: 1.1 } : {}}
           whileTap={hasAgreed ? { scale: 0.95 } : {}}
           disabled={!hasAgreed}
+          title={
+            !hasAgreed
+              ? "📜 Bạn cần đọc bản quyền trước khi mở quà nha!"
+              : ""
+          }
         >
           🎁 Nhấn để mở quà 🎁
         </motion.button>
@@ -93,7 +135,6 @@ export default function Welcome({ onStart }) {
                 <br />
               </p>
 
-              {/* Checkbox xác nhận đã đọc */}
               <div className="flex items-center gap-2 mt-5">
                 <input
                   type="checkbox"
